@@ -15,6 +15,7 @@ func main() {
 	version := "/api/v1/"
 
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc(version+"configs", getHandler)
 
 	log.Println(fmt.Sprintf("Server listening on %s", port))
 	err := http.ListenAndServe(port, nil)
@@ -40,7 +41,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Return all configuration as JSON
-func configurations(w http.ResponseWriter, r *http.Request) {
+func getHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(config.AllToJson())
