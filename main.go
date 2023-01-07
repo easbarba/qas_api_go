@@ -21,6 +21,12 @@ func main() {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
+	// ignore all other routes other than root
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
 	w.Write([]byte("Hello, world!"))
 }
 
