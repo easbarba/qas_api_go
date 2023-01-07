@@ -11,11 +11,11 @@ import (
 	"path/filepath"
 )
 
-// HomeFolder that all projects repositories will be stored at
-var HomeFolder string = path.Join(Home(), "Projects")
+// ProjectsHomeFolder that all projects repositories will be stored at
+var ProjectsHomeFolder string = path.Join(Home(), "Projects")
 
-// folder that config files will be looked up for
-var folder string = path.Join(Home(), ".config", "qas")
+// QasConfigfolder that config files will be looked up for
+var QasConfigfolder string = path.Join(Home(), ".config", "qas")
 
 // Home folder of user
 func Home() string {
@@ -27,7 +27,7 @@ func Home() string {
 	return home
 }
 
-type Projects []struct {
+type Project struct {
 	Name   string `json:"name"`
 	Branch string `json:"branch"`
 	URL    string `json:"url"`
@@ -36,11 +36,11 @@ type Projects []struct {
 // Config structure of Configuration files
 // log config files found
 type Config struct {
-	Lang     string `json:"lang"`
-	Projects `json:"projects"`
+	Lang     string    `json:"lang"`
+	Projects []Project `json:"projects"`
 }
 
-func Append(projects Projects) Projects {
+func Append(project []Project) []Project {
 	new := struct {
 		Name   string "json:\"name\""
 		Branch string "json:\"branch\""
@@ -49,7 +49,7 @@ func Append(projects Projects) Projects {
 		Name: "httprouter", Branch: "master", URL: "https://github.com/julienschmidt/httprouter",
 	}
 
-	return append(projects, new)
+	return append(project, new)
 }
 
 // All configuration files unmarshallowed
@@ -63,7 +63,7 @@ func All() []Config {
 	}
 
 	for _, file := range files {
-		p := path.Join(folder, file.Name())
+		p := path.Join(QasConfigfolder, file.Name())
 		fileInfo, err := os.Stat(p)
 
 		// ignore broken symbolic link
@@ -86,6 +86,55 @@ func All() []Config {
 	}
 
 	return configs
+}
+
+func New() ([]byte, error) {
+	config := Config{
+		Lang: "elixir",
+		Projects: []Project{
+			{Name: "httprouter", Branch: "master", URL: "https://github.com/julienschmidt/httprouter"},
+			{Name: "meh", Branch: "master", URL: "https://github.com/meh/meh"},
+		},
+	}
+
+	writeNewConfig(config)
+
+	result, err := json.Marshal(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// Write new configuration to a json file
+func writeNewConfig(newConfig Config) error {
+	configs := All()
+
+	// Check if any configuration has already Lang set, and skip it!
+	for _, config := range configs {
+		if config.Lang == newConfig.Lang {
+			log.Println("Configuration already exist. Skipping!")
+			return nil
+		}
+	}
+
+	// Write new configuration to file
+	file, _ := json.MarshalIndent(newConfig, "", "  ")
+	newConfigPath := path.Join(QasConfigfolder, newConfig.Lang+".json")
+	err := ioutil.WriteFile(newConfigPath, file, 0644)
+	if err != nil {
+		return err
+	}
+
+	log.Println(fmt.Printf("%s configuration file saved on disk!", newConfig))
+
+	return nil
+}
+
+// TODO: Check for duplicates in configuration files
+func ConfigCheckDuplicates() {
+	panic("unimplemented")
 }
 
 // Bundle configurations as a JSON array
@@ -133,7 +182,7 @@ func jsonToConfig(filepath string) Config {
 
 // all configuration files found TODO: return error if no configuration is found.
 func files() ([]fs.FileInfo, error) {
-	files, err := ioutil.ReadDir(folder)
+	files, err := ioutil.ReadDir(QasConfigfolder)
 	if err != nil {
 		log.Fatal(err)
 	}
