@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -25,26 +24,9 @@ func home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello, world!"))
 }
 
-// Return all configuration as json
+// Return all configuration as JSON
 func configurations(w http.ResponseWriter, r *http.Request) {
-	configs := config.All()
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("["))
-
-	for m, config := range configs {
-		pjs, err := json.Marshal(config)
-
-		if err != nil {
-			log.Fatal("no configuration file found!")
-		}
-
-		w.Write(pjs)
-
-		if m < len(configs)-1 {
-			w.Write([]byte(","))
-		}
-	}
-
-	w.Write([]byte("]"))
+	w.Write(config.AllToJson())
 }

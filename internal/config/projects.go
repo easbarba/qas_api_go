@@ -88,6 +88,32 @@ func All() []Config {
 	return configs
 }
 
+// Bundle configurations as a JSON array
+func AllToJson() []byte {
+	// begin json object with a left bracket
+	result := []byte("[")
+
+	// append a colon to each object configuration
+	configs := All()
+	for m, config := range configs {
+		pjs, err := json.Marshal(config)
+		if err != nil {
+			log.Fatal("Error while marshalling configurations!")
+		}
+
+		result = append(result, pjs...)
+
+		if m < len(configs)-1 {
+			result = append(result, []byte(",")...)
+		}
+	}
+
+	// append final right bracket
+	result = append(result, []byte("]")...)
+
+	return result
+}
+
 // Parse configuration file, check if the expect syntax is correct TODO: or err.
 func jsonToConfig(filepath string) Config {
 	var config Config
