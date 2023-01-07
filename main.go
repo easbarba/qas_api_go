@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,23 +12,31 @@ import (
 var port = ":4000"
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/api/configs", configurations)
+	version := "/api/v1/"
+
+	http.HandleFunc("/", indexHandler)
 
 	log.Println(fmt.Sprintf("Server listening on %s", port))
-	err := http.ListenAndServe(port, mux)
+	err := http.ListenAndServe(port, nil)
 	log.Fatal(err)
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
+func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// ignore all other routes other than root
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
-	w.Write([]byte("Hello, world!"))
+	hello, err := json.Marshal("Hello, world!")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(hello))
 }
 
 // Return all configuration as JSON
