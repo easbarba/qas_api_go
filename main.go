@@ -1,12 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/easbarba/qas/internal/config"
+	"github.com/easbarba/qas_api/handlers"
 )
 
 var port = ":4000"
@@ -14,53 +13,11 @@ var port = ":4000"
 func main() {
 	version := "/api/v1/"
 
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc(version+"configs", getHandler)
-	http.HandleFunc(version+"configs/create", createHandler)
+	http.HandleFunc("/", handlers.IndexHandler)
+	http.HandleFunc(version+"configs", handlers.ListHandler)
+	http.HandleFunc(version+"configs/create", handlers.CreateHandler)
 
 	log.Println(fmt.Sprintf("Server listening on %s", port))
 	err := http.ListenAndServe(port, nil)
 	log.Fatal(err)
-}
-
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	// ignore all other routes other than root
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-
-	hello, err := json.Marshal("Hello, world!")
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(hello))
-}
-
-// Return all configuration as JSON
-func getHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(config.AllToJson())
-}
-
-func createHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("Method not allowed"))
-		return
-	}
-
-	newConfig, err := config.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(newConfig)
 }
