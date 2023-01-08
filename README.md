@@ -1,5 +1,7 @@
 # Qas | API
 
+Qas backend API built against Golang `net/http`.
+
 ## Config Endpoint
 
 | Method | Path                     | Status Code      | Description                        |
@@ -10,6 +12,10 @@
 | PUT    | /v1/cfg/update?lang      | 200 (OK)         | Updates a Config resource.         |
 | PATCH  | /v1/cfg/append?lang?info | 200 (OK)         | Append project to Config resource. |
 | DELETE | /v1/cfg/delete?lang      | 204 (No content) | Deletes a Config resource.         |
+
+## Port
+
+Default port is at `:5000`
 
 ## Configuration
 

@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	port    = ":4000"
+	port    = ":5000"
 	version = "/v1/"
 )
 
@@ -44,4 +44,5 @@ func routeList() {
 	http.HandleFunc(version+"cfg/all", handlers.ListHandler)
 	http.HandleFunc(version+"cfg/one", handlers.GetOneHandler)
 	http.HandleFunc(version+"cfg/create", handlers.CreateHandler)
+	http.HandleFunc(version+"cfg/delete", handlers.DeleteHandler)
 }

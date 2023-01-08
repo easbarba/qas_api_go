@@ -90,6 +90,20 @@ func GetOne(lang string) ([]byte, error) {
 	return nil, errors.New(fmt.Sprintf("No configuration with Lang '%s' tag found!", lang))
 }
 
+func Delete(lang string) error {
+	for _, config := range All() {
+		if config.Lang == lang {
+			err := RemoveConfig(lang)
+			if err != nil {
+				return errors.New("Unable to delete config")
+			}
+		}
+	}
+
+	// successfully delete configuration file
+	return nil
+}
+
 func New(payload io.ReadCloser) ([]byte, error) {
 	var config models.Config
 	err := json.NewDecoder(payload).Decode(&config)

@@ -17,8 +17,8 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"path"
 
 	"github.com/easbarba/qas_api/internal/common"
@@ -40,12 +40,23 @@ func writeNewConfig(newConfig models.Config) error {
 	// Write new configuration to file
 	file, _ := json.MarshalIndent(newConfig.Projects, "", "  ")
 	newConfigPath := path.Join(common.QasConfigfolder, newConfig.Lang+".json")
-	err := ioutil.WriteFile(newConfigPath, file, 0644)
+	err := os.WriteFile(newConfigPath, file, 0644)
 	if err != nil {
 		return err
 	}
 
 	log.Println(fmt.Printf("%s configuration file saved on disk!", newConfig))
+
+	return nil
+}
+
+func RemoveConfig(lang string) error {
+	configPath := path.Join(common.QasConfigfolder, lang+".json")
+
+	err := os.Remove(configPath)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -87,14 +98,15 @@ func AllToJson() []byte {
 func TranslateConfig(filepath string, filename string) models.Config {
 	var projects models.Projects
 
-	file, err := ioutil.ReadFile(filepath)
+	file, err := os.ReadFile(filepath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	err = json.Unmarshal(file, &projects)
 	if err != nil {
-		log.Fatal(err)
+		errMsg := fmt.Sprintf("Configuration file has incorrect syntax \n%s", err)
+		log.Fatal(errMsg)
 	}
 
 	config := models.Config{
