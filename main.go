@@ -23,7 +23,7 @@ func main() {
 
 func routeList() {
 	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc(version+"configs", handlers.ListHandler)
-	http.HandleFunc(version+"configs/view", handlers.GetOneHandler)
-	http.HandleFunc(version+"configs/create", handlers.CreateHandler)
+	http.HandleFunc(version+"cfg/all", handlers.ListHandler)
+	http.HandleFunc(version+"cfg/one", handlers.GetOneHandler)
+	http.HandleFunc(version+"cfg/create", handlers.CreateHandler)
 }
