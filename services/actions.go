@@ -1,4 +1,4 @@
-package config
+package services
 
 import (
 	"encoding/json"
@@ -9,38 +9,12 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/easbarba/qas_api/common"
+	"github.com/easbarba/qas_api/models"
 )
 
-// ProjectsHomeFolder that all projects repositories will be stored at
-var ProjectsHomeFolder string = path.Join(Home(), "Projects")
-
-// QasConfigfolder that config files will be looked up for
-var QasConfigfolder string = path.Join(Home(), ".config", "qas")
-
-// Home folder of user
-func Home() string {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return home
-}
-
-type Project struct {
-	Name   string `json:"name"`
-	Branch string `json:"branch"`
-	URL    string `json:"url"`
-}
-
-// Config structure of Configuration files
-// log config files found
-type Config struct {
-	Lang     string    `json:"lang"`
-	Projects []Project `json:"projects"`
-}
-
-func Append(project []Project) []Project {
+func Append(project []models.Project) []models.Project {
 	new := struct {
 		Name   string "json:\"name\""
 		Branch string "json:\"branch\""
@@ -53,8 +27,8 @@ func Append(project []Project) []Project {
 }
 
 // All configuration files unmarshallowed
-func All() []Config {
-	var configs []Config
+func All() []models.Config {
+	var configs []models.Config
 
 	files, err := files()
 	if err != nil {
@@ -63,7 +37,7 @@ func All() []Config {
 	}
 
 	for _, file := range files {
-		p := path.Join(QasConfigfolder, file.Name())
+		p := path.Join(common.QasConfigfolder, file.Name())
 		fileInfo, err := os.Stat(p)
 
 		// ignore broken symbolic link
@@ -88,10 +62,14 @@ func All() []Config {
 	return configs
 }
 
+func GetOne(lang string) []byte {
+	return []byte(lang)
+}
+
 func New() ([]byte, error) {
-	config := Config{
+	config := models.Config{
 		Lang: "elixir",
-		Projects: []Project{
+		Projects: []models.Project{
 			{Name: "httprouter", Branch: "master", URL: "https://github.com/julienschmidt/httprouter"},
 			{Name: "meh", Branch: "master", URL: "https://github.com/meh/meh"},
 		},
@@ -108,7 +86,7 @@ func New() ([]byte, error) {
 }
 
 // Write new configuration to a json file
-func writeNewConfig(newConfig Config) error {
+func writeNewConfig(newConfig models.Config) error {
 	configs := All()
 
 	// Check if any configuration has already Lang set, and skip it!
@@ -121,7 +99,7 @@ func writeNewConfig(newConfig Config) error {
 
 	// Write new configuration to file
 	file, _ := json.MarshalIndent(newConfig, "", "  ")
-	newConfigPath := path.Join(QasConfigfolder, newConfig.Lang+".json")
+	newConfigPath := path.Join(common.QasConfigfolder, newConfig.Lang+".json")
 	err := ioutil.WriteFile(newConfigPath, file, 0644)
 	if err != nil {
 		return err
@@ -164,8 +142,8 @@ func AllToJson() []byte {
 }
 
 // Parse configuration file, check if the expect syntax is correct TODO: or err.
-func jsonToConfig(filepath string) Config {
-	var config Config
+func jsonToConfig(filepath string) models.Config {
+	var config models.Config
 
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
@@ -182,7 +160,7 @@ func jsonToConfig(filepath string) Config {
 
 // all configuration files found TODO: return error if no configuration is found.
 func files() ([]fs.FileInfo, error) {
-	files, err := ioutil.ReadDir(QasConfigfolder)
+	files, err := ioutil.ReadDir(common.QasConfigfolder)
 	if err != nil {
 		log.Fatal(err)
 	}

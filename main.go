@@ -15,6 +15,7 @@ func main() {
 
 	http.HandleFunc("/", handlers.IndexHandler)
 	http.HandleFunc(version+"configs", handlers.ListHandler)
+	http.HandleFunc(version+"configs?lang", handlers.GetOneHandler)
 	http.HandleFunc(version+"configs/create", handlers.CreateHandler)
 
 	log.Println(fmt.Sprintf("Server listening on %s", port))

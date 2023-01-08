@@ -4,17 +4,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/easbarba/qas_api/internal/config"
+	"github.com/easbarba/qas_api/services"
 )
 
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("Method not allowed"))
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	newConfig, err := config.New()
+	newConfig, err := services.New()
 	if err != nil {
 		log.Fatal(err)
 	}

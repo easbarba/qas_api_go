@@ -7,8 +7,10 @@ import (
 )
 
 // Return all configuration as JSON
-func ListHandler(w http.ResponseWriter, r *http.Request) {
+func GetOneHandler(w http.ResponseWriter, r *http.Request) {
+	key := r.URL.Query().Get("lang")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(services.AllToJson())
+	w.Write(services.GetOne(key))
 }
