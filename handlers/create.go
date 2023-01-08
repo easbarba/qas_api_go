@@ -14,7 +14,10 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newConfig, err := services.New()
+	payload := r.Body
+	defer r.Body.Close()
+
+	newConfig, err := services.New(payload)
 	if err != nil {
 		log.Fatal(err)
 	}

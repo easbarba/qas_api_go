@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"io/ioutil"
 	"log"
@@ -78,13 +79,12 @@ func GetOne(lang string) ([]byte, error) {
 	return nil, errors.New(fmt.Sprintf("No configuration with Lang '%s' tag found!", lang))
 }
 
-func New() ([]byte, error) {
-	config := models.Config{
-		Lang: "elixir",
-		Projects: []models.Project{
-			{Name: "httprouter", Branch: "master", URL: "https://github.com/julienschmidt/httprouter"},
-			{Name: "meh", Branch: "master", URL: "https://github.com/meh/meh"},
-		},
+func New(payload io.ReadCloser) ([]byte, error) {
+	var config models.Config
+	err := json.NewDecoder(payload).Decode(&config)
+
+	if err != nil {
+		return nil, errors.New("jackshit")
 	}
 
 	writeNewConfig(config)
