@@ -3,14 +3,12 @@
 OS :=linux
 ARCH := amd64
 NAME := qas
-TO := ${HOME}/.local/bin
-
+BIN := ./main.go
 deps:
 	go mod download
 
-
 build: test
-	GOARCH=$(ARCH) GOOS=$(OS) go build -o ${NAME} ./main.go
+	GOARCH=$(ARCH) GOOS=$(OS) go build -o ${NAME} ${BIN}
 
 lint:
 	golint ./...
@@ -19,7 +17,7 @@ vet:
 	go vet ./...
 
 run:
-	go run main.go
+	go run ${BIN}
 
 test:
 	go test ./...
@@ -31,4 +29,4 @@ shell:
 	guix shell --pure --container
 
 watch:
-	CompileDaemon --build="go build -o ./${NAME} ." --command="./${NAME}"
+	CompileDaemon --build="go build -o ./${NAME} ${BIN}" --command="./${NAME}"

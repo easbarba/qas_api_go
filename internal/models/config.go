@@ -12,32 +12,12 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Qas. If not, see <https://www.gnu.org/licenses/>.
  */
-package main
+package models
 
-import (
-	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/easbarba/qas_api/internal/handlers"
-)
-
-const (
-	port    = ":4000"
-	version = "/v1/"
-)
-
-func main() {
-	routeList()
-
-	log.Println(fmt.Sprintf("Server listening on %s", port))
-	err := http.ListenAndServe(port, nil)
-	log.Fatal(err)
-}
-
-func routeList() {
-	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc(version+"cfg/all", handlers.ListHandler)
-	http.HandleFunc(version+"cfg/one", handlers.GetOneHandler)
-	http.HandleFunc(version+"cfg/create", handlers.CreateHandler)
+// Config structure of Configuration files
+// log config files found
+// Lang to be set to the file name
+type Config struct {
+	Lang     string    `json:"lang"`
+	Projects []Project `json:"projects"`
 }

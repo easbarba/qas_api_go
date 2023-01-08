@@ -15,6 +15,10 @@
 
 To load all dependencies, just run `guix shell`
 
+## TODO
+
+- simpler configuration file, listing projects only.
+
 ## License
 
 [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.en.html)
