@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -62,8 +63,19 @@ func All() []models.Config {
 	return configs
 }
 
-func GetOne(lang string) []byte {
-	return []byte(lang)
+func GetOne(lang string) ([]byte, error) {
+	for _, config := range All() {
+		if config.Lang == lang {
+			cfg, err := json.Marshal(config)
+			if err != nil {
+				return nil, errors.New("Unable to convert current config to JSON")
+			}
+
+			return cfg, nil
+		}
+	}
+
+	return nil, errors.New(fmt.Sprintf("No configuration with Lang '%s' tag found!", lang))
 }
 
 func New() ([]byte, error) {

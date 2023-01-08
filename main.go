@@ -8,17 +8,22 @@ import (
 	"github.com/easbarba/qas_api/handlers"
 )
 
-var port = ":4000"
+const (
+	port    = ":4000"
+	version = "/api/v1/"
+)
 
 func main() {
-	version := "/api/v1/"
-
-	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc(version+"configs", handlers.ListHandler)
-	http.HandleFunc(version+"configs?lang", handlers.GetOneHandler)
-	http.HandleFunc(version+"configs/create", handlers.CreateHandler)
+	routeList()
 
 	log.Println(fmt.Sprintf("Server listening on %s", port))
 	err := http.ListenAndServe(port, nil)
 	log.Fatal(err)
+}
+
+func routeList() {
+	http.HandleFunc("/", handlers.IndexHandler)
+	http.HandleFunc(version+"configs", handlers.ListHandler)
+	http.HandleFunc(version+"configs/view", handlers.GetOneHandler)
+	http.HandleFunc(version+"configs/create", handlers.CreateHandler)
 }
