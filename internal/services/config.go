@@ -38,7 +38,7 @@ func writeNewConfig(newConfig models.Config) error {
 	}
 
 	// Write new configuration to file
-	file, _ := json.MarshalIndent(newConfig, "", "  ")
+	file, _ := json.MarshalIndent(newConfig.Projects, "", "  ")
 	newConfigPath := path.Join(common.QasConfigfolder, newConfig.Lang+".json")
 	err := ioutil.WriteFile(newConfigPath, file, 0644)
 	if err != nil {
@@ -65,7 +65,7 @@ func AllToJson() []byte {
 	for m, config := range configs {
 		pjs, err := json.Marshal(config)
 		if err != nil {
-			log.Fatal("Error while marshalling configurations!")
+			log.Println("Error while marshalling configurations!")
 		}
 
 		result = append(result, pjs...)
@@ -81,19 +81,30 @@ func AllToJson() []byte {
 	return result
 }
 
-// Parse configuration file, check if the expect syntax is correct TODO: or err.
-func jsonToConfig(filepath string) models.Config {
-	var config models.Config
+// Parse configuration file,
+// TODO: check if the expect syntax is correct
+// TODO: or err.
+func TranslateConfig(filepath string, filename string) models.Config {
+	var projects models.Projects
 
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = json.Unmarshal(file, &config)
+	err = json.Unmarshal(file, &projects)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	config := models.Config{
+		Lang:     common.FileNameWithoutExtension(filename),
+		Projects: projects,
+	}
+
 	return config
+}
+
+func CheckConfigSyntax() error {
+	panic("Not implemented")
 }

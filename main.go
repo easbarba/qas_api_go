@@ -30,9 +30,13 @@ const (
 func main() {
 	routeList()
 
-	log.Println(fmt.Sprintf("Server listening on %s", port))
+	msg := fmt.Sprintf("Server listening on %s", port)
+	log.Println(msg)
+
 	err := http.ListenAndServe(port, nil)
-	log.Fatal(err)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
 
 func routeList() {

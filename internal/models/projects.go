@@ -14,7 +14,7 @@
  */
 package models
 
-type Project struct {
+type Projects []struct {
 	Name   string `json:"name"`
 	Branch string `json:"branch"`
 	URL    string `json:"url"`

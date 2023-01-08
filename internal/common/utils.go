@@ -12,12 +12,13 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Qas. If not, see <https://www.gnu.org/licenses/>.
  */
-package models
+package common
 
-// Config structure of Configuration files
-// log config files found
-// Lang to be set to the file name
-type Config struct {
-	Lang     string `json:"lang"`
-	Projects Projects
+import (
+	"path/filepath"
+	"strings"
+)
+
+func FileNameWithoutExtension(filename string) string {
+	return strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename))
 }

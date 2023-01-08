@@ -11,13 +11,35 @@
 | PATCH  | /v1/cfg/append?lang?info | 200 (OK)         | Append project to Config resource. |
 | DELETE | /v1/cfg/delete?lang      | 204 (No content) | Deletes a Config resource.         |
 
+## Configuration
+
+`qas` looks for configuration files at `$XDG_CONFIG/qas`:
+
+$XDG_CONFIG/qas/misc.json
+
+```json
+[
+  {
+    "name": "awesomewm",
+    "branch": "master",
+    "url": "https://github.com/awesomeWM/awesome"
+  },
+  {
+    "name": "nuxt",
+    "branch": "main",
+    "url": "https://github.com/nuxt/framework"
+  },
+  {
+    "name": "swift_format",
+    "branch": "main",
+    "url": "https://github.com/apple/swift-format"
+  }
+]
+```
+
 ## Guix
 
 To load all dependencies, just run `guix shell`
-
-## TODO
-
-- simpler configuration file, listing projects only.
 
 ## License
 

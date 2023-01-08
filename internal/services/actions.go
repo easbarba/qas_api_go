@@ -27,7 +27,7 @@ import (
 	"github.com/easbarba/qas_api/internal/models"
 )
 
-func Append(project []models.Project) []models.Project {
+func Append(project models.Projects) models.Projects {
 	new := struct {
 		Name   string "json:\"name\""
 		Branch string "json:\"branch\""
@@ -68,7 +68,7 @@ func All() []models.Config {
 			continue
 		}
 
-		configed := jsonToConfig(p)
+		configed := TranslateConfig(p, file.Name())
 		configs = append(configs, configed)
 	}
 
