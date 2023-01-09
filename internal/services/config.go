@@ -16,6 +16,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -32,8 +33,7 @@ func writeNewConfig(newConfig models.Config) error {
 	// Check if any configuration has already Lang set, and skip it!
 	for _, config := range configs {
 		if config.Lang == newConfig.Lang {
-			log.Println("Configuration already exist. Skipping!")
-			return nil
+			return errors.New("Configuration already exist. Skipping!")
 		}
 	}
 
@@ -42,11 +42,10 @@ func writeNewConfig(newConfig models.Config) error {
 	newConfigPath := path.Join(common.QasConfigfolder, newConfig.Lang+".json")
 	err := os.WriteFile(newConfigPath, file, 0644)
 	if err != nil {
-		return err
+		return errors.New(err.Error())
 	}
 
 	log.Println(fmt.Printf("%s configuration file saved on disk!", newConfig))
-
 	return nil
 }
 
@@ -100,13 +99,13 @@ func TranslateConfig(filepath string, filename string) models.Config {
 
 	file, err := os.ReadFile(filepath)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	err = json.Unmarshal(file, &projects)
 	if err != nil {
 		errMsg := fmt.Sprintf("Configuration file has incorrect syntax \n%s", err)
-		log.Fatal(errMsg)
+		log.Println(errMsg)
 	}
 
 	config := models.Config{

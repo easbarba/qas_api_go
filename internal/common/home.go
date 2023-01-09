@@ -32,7 +32,7 @@ var QasConfigfolder string = path.Join(Home(), ".config", "qas")
 func Home() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	return home
@@ -42,7 +42,7 @@ func Home() string {
 func Files() ([]fs.FileInfo, error) {
 	files, err := ioutil.ReadDir(QasConfigfolder)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	return files, nil

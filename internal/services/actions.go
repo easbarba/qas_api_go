@@ -112,7 +112,10 @@ func New(payload io.ReadCloser) ([]byte, error) {
 		return nil, errors.New("jackshit")
 	}
 
-	writeNewConfig(config)
+	err = writeNewConfig(config)
+	if err != nil {
+		return nil, err
+	}
 
 	result, err := json.Marshal(config)
 	if err != nil {
