@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 	"path"
+
+	"github.com/easbarba/qas_api/internal/middleware"
 )
 
 const (
@@ -10,7 +12,7 @@ const (
 	prefix  = "config"
 )
 
-func (app *Application) Routes() *http.ServeMux {
+func (app *Application) Routes() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", app.index)
@@ -19,7 +21,7 @@ func (app *Application) Routes() *http.ServeMux {
 	mux.HandleFunc(app.routePath("create"), app.create)
 	mux.HandleFunc(app.routePath("delete"), app.delete)
 
-	return mux
+	return middleware.SecureHeaders(mux)
 }
 
 func (app *Application) routePath(resource string) string {
