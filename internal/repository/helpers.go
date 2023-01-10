@@ -66,29 +66,20 @@ func ConfigCheckDuplicates() {
 }
 
 // Bundle configurations as a JSON array
-func AllToJson() []byte {
-	// begin json object with a left bracket
-	result := []byte("[")
+func AllToJson() ([]byte, error) {
+	mapped := make(map[string]models.Projects)
 
-	// append a colon to each object configuration
 	configs := All()
-	for index, config := range configs {
-		projects, err := json.Marshal(config)
-		if err != nil {
-			log.Println("Error while marshalling configurations!")
-		}
-
-		result = append(result, projects...)
-
-		if index < len(configs)-1 {
-			result = append(result, []byte(",")...)
-		}
+	for _, config := range configs {
+		mapped[config.Lang] = config.Projects
 	}
 
-	// append final right bracket
-	result = append(result, []byte("]")...)
+	result, err := json.Marshal(mapped)
+	if err != nil {
+		return nil, errors.New(err.Error())
+	}
 
-	return result
+	return result, nil
 }
 
 // Parse configuration file,

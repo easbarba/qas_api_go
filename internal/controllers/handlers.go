@@ -21,7 +21,7 @@ func (app *Application) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hello, err := json.Marshal("Hello, world!")
+	hello, err := json.Marshal(map[string]string{"message": "Hello, world!"})
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -30,7 +30,6 @@ func (app *Application) index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(hello))
-
 }
 
 // Return all configuration as JSON
@@ -41,9 +40,14 @@ func (app *Application) all(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	result, err := repository.AllToJson()
+	if err != nil {
+		app.serverError(w, err)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(repository.AllToJson())
+	w.Write(result)
 }
 
 // Return all configuration as JSON
