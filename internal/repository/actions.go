@@ -40,17 +40,21 @@ func Append(project models.Projects) models.Projects {
 }
 
 // All configuration files unmarshallowed
-func All() []models.Config {
+func All() ([]models.Config, error) {
 	var configs []models.Config
 
 	files, err := common.Files()
 	if err != nil {
-		fmt.Println("no configuration file found!")
-		os.Exit(1)
+		return nil, errors.New("no configuration file found!")
 	}
 
 	for _, file := range files {
-		p := path.Join(common.QasConfigfolder, file.Name())
+		qas_dir, err := common.QasConfigfolder()
+		if err != nil {
+			return nil, err
+		}
+
+		p := path.Join(qas_dir, file.Name())
 		fileInfo, err := os.Stat(p)
 
 		// ignore broken symbolic link
@@ -68,15 +72,24 @@ func All() []models.Config {
 			continue
 		}
 
-		configed := TranslateConfig(p, file.Name())
+		configed, err := TranslateConfig(p, file.Name())
+		if err != nil {
+			return nil, err
+		}
+
 		configs = append(configs, configed)
 	}
 
-	return configs
+	return configs, nil
 }
 
 func GetOne(lang string) ([]byte, error) {
-	for _, config := range All() {
+	configs, err := All()
+	if err != nil {
+		return nil, errors.New("no configuration file found!")
+	}
+
+	for _, config := range configs {
 		if config.Lang == lang {
 			cfg, err := json.Marshal(config)
 			if err != nil {
@@ -91,13 +104,20 @@ func GetOne(lang string) ([]byte, error) {
 }
 
 func Delete(lang string) error {
-	for _, config := range All() {
+	configs, err := All()
+	if err != nil {
+		return errors.New(err.Error())
+	}
+
+	for _, config := range configs {
 		if config.Lang == lang {
 			err := RemoveConfig(lang)
 			if err != nil {
 				return errors.New("Unable to delete config")
 			}
 		}
+
+		return errors.New("No such a configuration file found!")
 	}
 
 	// successfully delete configuration file

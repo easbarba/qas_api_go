@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -28,7 +27,10 @@ import (
 
 // Write new configuration to a json file
 func writeNewConfig(newConfig models.Config) error {
-	configs := All()
+	configs, err := All()
+	if err != nil {
+		return errors.New("no configuration file found!")
+	}
 
 	// Check if any configuration has already Lang set, and skip it!
 	for _, config := range configs {
@@ -39,20 +41,29 @@ func writeNewConfig(newConfig models.Config) error {
 
 	// Write new configuration to file
 	file, _ := json.MarshalIndent(newConfig.Projects, "", "  ")
-	newConfigPath := path.Join(common.QasConfigfolder, newConfig.Lang+".json")
-	err := os.WriteFile(newConfigPath, file, 0644)
+
+	qas_dir, err := common.QasConfigfolder()
+	if err != nil {
+		return err
+	}
+
+	newConfigPath := path.Join(qas_dir, newConfig.Lang+".json")
+	err = os.WriteFile(newConfigPath, file, 0644)
 	if err != nil {
 		return errors.New(err.Error())
 	}
 
-	log.Println(fmt.Printf("%s configuration file saved on disk!", newConfig))
 	return nil
 }
 
 func RemoveConfig(lang string) error {
-	configPath := path.Join(common.QasConfigfolder, lang+".json")
+	qas_dir, err := common.QasConfigfolder()
+	if err != nil {
+		return err
+	}
 
-	err := os.Remove(configPath)
+	configPath := path.Join(qas_dir, lang+".json")
+	err = os.Remove(configPath)
 	if err != nil {
 		return err
 	}
@@ -69,7 +80,11 @@ func ConfigCheckDuplicates() {
 func AllToJson() ([]byte, error) {
 	mapped := make(map[string]models.Projects)
 
-	configs := All()
+	configs, err := All()
+	if err != nil {
+		return nil, errors.New(err.Error())
+	}
+
 	for _, config := range configs {
 		mapped[config.Lang] = config.Projects
 	}
@@ -85,18 +100,18 @@ func AllToJson() ([]byte, error) {
 // Parse configuration file,
 // TODO: check if the expect syntax is correct
 // TODO: or err.
-func TranslateConfig(filepath string, filename string) models.Config {
+func TranslateConfig(filepath string, filename string) (models.Config, error) {
 	var projects models.Projects
 
 	file, err := os.ReadFile(filepath)
 	if err != nil {
-		log.Println(err)
+		return models.Config{}, err
 	}
 
 	err = json.Unmarshal(file, &projects)
 	if err != nil {
-		errMsg := fmt.Sprintf("Configuration file has incorrect syntax \n%s", err)
-		log.Println(errMsg)
+		errMsg := fmt.Sprintf("Configuration file has incorrect syntax \n%s", err.Error())
+		return models.Config{}, errors.New(errMsg)
 	}
 
 	config := models.Config{
@@ -104,7 +119,7 @@ func TranslateConfig(filepath string, filename string) models.Config {
 		Projects: projects,
 	}
 
-	return config
+	return config, nil
 }
 
 func CheckConfigSyntax() error {

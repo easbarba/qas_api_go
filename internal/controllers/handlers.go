@@ -90,6 +90,7 @@ func (app *Application) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	app.InfoLog.Println("New configuration file saved on disk!")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(newConfig)
@@ -110,4 +111,6 @@ func (app *Application) delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+	app.InfoLog.Println("Configuration file deleted!")
+
 }

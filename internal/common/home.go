@@ -17,32 +17,50 @@ package common
 import (
 	"io/fs"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 )
 
 // ProjectsHomeFolder that all projects repositories will be stored at
-var ProjectsHomeFolder string = path.Join(Home(), "Projects")
-
-// QasConfigfolder that config files will be looked up for
-var QasConfigfolder string = path.Join(Home(), ".config", "qas")
-
-// Home folder of user
-func Home() string {
-	home, err := os.UserHomeDir()
+func ProjectsHomeFolder() (string, error) {
+	home, err := Home()
 	if err != nil {
-		log.Println(err)
+		return "", err
 	}
 
-	return home
+	return path.Join(home, "Projects"), nil
+}
+
+// QasConfigfolder that config files will be looked up for
+func QasConfigfolder() (string, error) {
+	home, err := Home()
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(home, ".config", "qas"), nil
+}
+
+// Home folder of user
+func Home() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	return home, nil
 }
 
 // all configuration files found TODO: return error if no configuration is found.
 func Files() ([]fs.FileInfo, error) {
-	files, err := ioutil.ReadDir(QasConfigfolder)
+	qas_folder, err := QasConfigfolder()
 	if err != nil {
-		log.Println(err)
+		return nil, err
+	}
+
+	files, err := ioutil.ReadDir(qas_folder)
+	if err != nil {
+		return nil, err
 	}
 
 	return files, nil

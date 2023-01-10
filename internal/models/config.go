@@ -14,9 +14,7 @@
  */
 package models
 
-// Config structure of Configuration files
-// log config files found
-// Lang to be set to the file name
+// Configuration files structure
 type Config struct {
 	Lang     string `json:"lang"`
 	Projects Projects
