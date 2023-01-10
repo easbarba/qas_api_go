@@ -12,7 +12,7 @@
 *  You should have received a copy of the GNU General Public License
 *  along with Qas. If not, see <https://www.gnu.org/licenses/>.
  */
-package services
+package repository
 
 import (
 	"encoding/json"
@@ -72,15 +72,15 @@ func AllToJson() []byte {
 
 	// append a colon to each object configuration
 	configs := All()
-	for m, config := range configs {
-		pjs, err := json.Marshal(config)
+	for index, config := range configs {
+		projects, err := json.Marshal(config)
 		if err != nil {
 			log.Println("Error while marshalling configurations!")
 		}
 
-		result = append(result, pjs...)
+		result = append(result, projects...)
 
-		if m < len(configs)-1 {
+		if index < len(configs)-1 {
 			result = append(result, []byte(",")...)
 		}
 	}
