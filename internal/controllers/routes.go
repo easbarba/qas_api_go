@@ -21,7 +21,9 @@ func (app *Application) Routes() http.Handler {
 	mux.HandleFunc(app.routePath("create"), app.create)
 	mux.HandleFunc(app.routePath("delete"), app.delete)
 
-	return app.logRequest(middleware.SecureHeaders(mux))
+	return app.recoverPanic(
+		app.logRequest(
+			middleware.SecureHeaders(mux)))
 }
 
 func (app *Application) routePath(resource string) string {
