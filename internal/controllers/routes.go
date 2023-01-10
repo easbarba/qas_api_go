@@ -15,7 +15,7 @@ const (
 func (app *Application) Routes() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", app.index)
+	mux.HandleFunc(app.routePath("/"), app.index)
 	mux.HandleFunc(app.routePath("all"), app.all)
 	mux.HandleFunc(app.routePath("one"), app.one)
 	mux.HandleFunc(app.routePath("create"), app.create)
@@ -23,7 +23,8 @@ func (app *Application) Routes() http.Handler {
 
 	return app.recoverPanic(
 		app.logRequest(
-			middleware.SecureHeaders(mux)))
+			middleware.SecureHeaders(
+				mux)))
 }
 
 func (app *Application) routePath(resource string) string {

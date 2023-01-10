@@ -28,15 +28,7 @@ import (
 )
 
 func Append(project models.Projects) models.Projects {
-	new := struct {
-		Name   string "json:\"name\""
-		Branch string "json:\"branch\""
-		URL    string "json:\"url\""
-	}{
-		Name: "httprouter", Branch: "master", URL: "https://github.com/julienschmidt/httprouter",
-	}
-
-	return append(project, new)
+	panic("not implemented")
 }
 
 // All configuration files unmarshallowed

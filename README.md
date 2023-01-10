@@ -2,22 +2,23 @@
 
 Qas backend API built against Golang `net/http`.
 
-## Config Endpoint
+## Endpoints
 
-| Method | Path                        | Status Code      | Description                        |
-| ------ | --------------------------- | ---------------- | ---------------------------------- |
-| GET    | /v1/config/all              | 200 (OK)         | Fetches all Configs resources.     |
-| GET    | /v1/config/one?lang         | 200 (OK)         | Fetch a single Config resource.    |
-| POST   | /v1/config/new              | 200 (CREATED)    | Create a new Config resource.      |
-| PUT    | /v1/config/update?lang      | 200 (OK)         | Updates a Config resource.         |
-| PATCH  | /v1/config/append?lang?info | 200 (OK)         | Append project to Config resource. |
-| DELETE | /v1/config/delete?lang      | 204 (No content) | Deletes a Config resource.         |
+| Method | Pattern                  | Code | Action                           |
+| ------ | ------------------------ | ---- | -------------------------------- |
+| GET    | /                        | 200  | Fetch the welcome message        |
+| GET    | /config/all              | 200  | Fetches all configurations.      |
+| GET    | /config/one?lang         | 200  | Fetch a single configuration.    |
+| POST   | /config/new              | 201  | Create a new configuration.      |
+| PUT    | /config/update?lang      | 200  | Overwrite a configuration.       |
+| PATCH  | /config/append?lang?info | 200  | Append project to configuration. |
+| DELETE | /config/delete?lang      | 204  | Deletes a configuration.         |
 
 ## Port
 
-Default port is at `:5000`
+Default port is at `:5000/VERSION`
 
-## Configuration
+## Configurations
 
 `qas` looks for configuration files at `$XDG_CONFIG/qas`:
 
@@ -43,10 +44,14 @@ $XDG_CONFIG/qas/misc.json
 ]
 ```
 
-## Guix
+## GNU Guix
 
 To load all system dependencies, just run `guix shell`
 
-## License
+## TODO
+
+- implement simpler Alice-like chaining
+
+## LICENSE
 
 [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.en.html)
