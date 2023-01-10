@@ -45,7 +45,7 @@ $XDG_CONFIG/qas/misc.json
 
 ## Guix
 
-To load all dependencies, just run `guix shell`
+To load all system dependencies, just run `guix shell`
 
 ## License
 
