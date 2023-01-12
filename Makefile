@@ -1,9 +1,10 @@
 .DEFAULT_GOAL := build
 
-OS :=linux
-ARCH := amd64
 NAME := qas
 MAIN := ./main.go
+
+OS :=linux
+ARCH := amd64
 
 deps:
 	go mod download
@@ -38,3 +39,6 @@ shell:
 
 watch:
 	CompileDaemon --build="go build -o ./${NAME} ${MAIN}" --command="./${NAME}"
+
+image:
+	podman build --file ./Dockerfile --tag ${USER}/${NAME}:$(shell cat .version)
