@@ -1,7 +1,8 @@
 .DEFAULT_GOAL := build
 
-NAME := qas
+NAME := qas_api
 MAIN := ./main.go
+DEST := ${HOME}/.local/bin
 
 OS :=linux
 ARCH := amd64
@@ -13,6 +14,9 @@ deps:
 
 build: test
 	GOARCH=$(ARCH) GOOS=$(OS) go build -o ${NAME} ${MAIN}
+
+install: build
+	mv -v ${NAME} ${DEST}/${NAME}
 
 lint:
 	golint ./...
