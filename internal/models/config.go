@@ -17,5 +17,5 @@ package models
 // Configuration files structure
 type Config struct {
 	Lang     string `json:"lang"`
-	Projects Projects
+	Projects `json:"projects"`
 }

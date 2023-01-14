@@ -40,7 +40,7 @@ func writeNewConfig(newConfig models.Config) error {
 	}
 
 	// Write new configuration to file
-	file, _ := json.MarshalIndent(newConfig.Projects, "", "  ")
+	file, _ := json.Marshal(newConfig.Projects)
 
 	qas_dir, err := common.QasConfigfolder()
 	if err != nil {
@@ -78,18 +78,18 @@ func ConfigCheckDuplicates() {
 
 // Bundle configurations as a JSON array
 func AllToJson() ([]byte, error) {
-	mapped := make(map[string]models.Projects)
+	// mapped := make(map[string]models.Projects)
 
 	configs, err := All()
 	if err != nil {
 		return nil, errors.New(err.Error())
 	}
 
-	for _, config := range configs {
-		mapped[config.Lang] = config.Projects
-	}
+	// for _, config := range configs {
+	// 	mapped[config.Lang] = config.Projects
+	// }
 
-	result, err := json.Marshal(mapped)
+	result, err := json.Marshal(configs)
 	if err != nil {
 		return nil, errors.New(err.Error())
 	}
