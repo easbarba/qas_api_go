@@ -51,6 +51,7 @@ To load all system dependencies, just run `guix shell`
 ## TODO
 
 - implement simpler Alice-like chaining
+- config: branch defaults to master
 
 ## LICENSE
 
