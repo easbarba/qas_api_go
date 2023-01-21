@@ -1,39 +1,13 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/easbarba/qas_api/internal/repository"
 )
 
-// Welcome user
-func (app *Application) index(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// ignore all other routes other than root
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-
-	hello, err := json.Marshal(map[string]string{"message": "Hello, world!"})
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(hello))
-}
-
-// Return all configuration as JSON
-func (app *Application) all(w http.ResponseWriter, r *http.Request) {
+// Return list configuration as JSON
+func (app *Application) list(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.Header().Set("Allow", http.MethodGet)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -73,7 +47,7 @@ func (app *Application) one(w http.ResponseWriter, r *http.Request) {
 }
 
 // Create a new configuration file
-func (app *Application) create(w http.ResponseWriter, r *http.Request) {
+func (app *Application) new(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -96,7 +70,7 @@ func (app *Application) create(w http.ResponseWriter, r *http.Request) {
 	w.Write(newConfig)
 }
 
-func (app *Application) delete(w http.ResponseWriter, r *http.Request) {
+func (app *Application) destroy(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		w.Header().Set("Allow", http.MethodDelete)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
